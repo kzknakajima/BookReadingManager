@@ -83,35 +83,51 @@ struct BookRowView: View {
     let book: Book
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(book.title)
-                    .fontWeight(.medium)
-                    .lineLimit(1)
-                Spacer()
-                Image(systemName: book.status.systemImage)
-                    .foregroundStyle(book.status.color)
-                    .font(.caption)
-            }
-            Text(book.author.isEmpty ? "著者不明" : book.author)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-            HStack(spacing: 4) {
-                if !book.genre.isEmpty {
-                    Text(book.genre)
-                        .font(.caption2)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(.quaternary, in: Capsule())
+        HStack(spacing: 10) {
+            // サムネイル
+            if let coverURL = book.coverURL, let url = URL(string: coverURL) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable().aspectRatio(contentMode: .fill)
+                    default:
+                        Color.secondary.opacity(0.15)
+                    }
                 }
-                if book.rating > 0 {
+                .frame(width: 36, height: 52)
+                .clipShape(RoundedRectangle(cornerRadius: 4))
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(book.title)
+                        .fontWeight(.medium)
+                        .lineLimit(1)
                     Spacer()
-                    HStack(spacing: 1) {
-                        ForEach(1...5, id: \.self) { i in
-                            Image(systemName: i <= book.rating ? "star.fill" : "star")
-                                .font(.system(size: 8))
-                                .foregroundStyle(i <= book.rating ? .yellow : .secondary)
+                    Image(systemName: book.status.systemImage)
+                        .foregroundStyle(book.status.color)
+                        .font(.caption)
+                }
+                Text(book.author.isEmpty ? "著者不明" : book.author)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                HStack(spacing: 4) {
+                    if !book.genre.isEmpty {
+                        Text(book.genre)
+                            .font(.caption2)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(.quaternary, in: Capsule())
+                    }
+                    if book.rating > 0 {
+                        Spacer()
+                        HStack(spacing: 1) {
+                            ForEach(1...5, id: \.self) { i in
+                                Image(systemName: i <= book.rating ? "star.fill" : "star")
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(i <= book.rating ? .yellow : .secondary)
+                            }
                         }
                     }
                 }

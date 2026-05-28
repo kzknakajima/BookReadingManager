@@ -27,6 +27,7 @@ public struct Book: Identifiable, Codable, Hashable, Sendable {
     public var dateAdded: Date
     public var dateStarted: Date?
     public var dateFinished: Date?
+    public var coverURL: String?
 
     public init(
         id: UUID = UUID(),
@@ -38,7 +39,8 @@ public struct Book: Identifiable, Codable, Hashable, Sendable {
         memo: String,
         dateAdded: Date,
         dateStarted: Date? = nil,
-        dateFinished: Date? = nil
+        dateFinished: Date? = nil,
+        coverURL: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -50,5 +52,6 @@ public struct Book: Identifiable, Codable, Hashable, Sendable {
         self.dateAdded = dateAdded
         self.dateStarted = dateStarted
         self.dateFinished = dateFinished
+        self.coverURL = coverURL
     }
 }

@@ -11,7 +11,22 @@ struct BookDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 // Header
-                HStack(alignment: .top) {
+                HStack(alignment: .top, spacing: 16) {
+                    // 表紙
+                    if let coverURL = book.coverURL, let url = URL(string: coverURL) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image.resizable().aspectRatio(contentMode: .fit)
+                            default:
+                                Color.clear
+                            }
+                        }
+                        .frame(width: 100, height: 150)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .shadow(radius: 4)
+                    }
+
                     VStack(alignment: .leading, spacing: 4) {
                         Text(book.title)
                             .font(.title2)
@@ -21,12 +36,13 @@ struct BookDetailView: View {
                                 .font(.title3)
                                 .foregroundStyle(.secondary)
                         }
+                        Spacer()
+                        Button { showingEdit = true } label: {
+                            Label("編集", systemImage: "pencil")
+                        }
+                        .buttonStyle(.bordered)
                     }
                     Spacer()
-                    Button { showingEdit = true } label: {
-                        Label("編集", systemImage: "pencil")
-                    }
-                    .buttonStyle(.bordered)
                 }
 
                 // Badges
