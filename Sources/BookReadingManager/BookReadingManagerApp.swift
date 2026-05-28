@@ -1,4 +1,5 @@
 import SwiftUI
+import BookReadingManagerCore
 
 struct BookReadingManagerApp: App {
     @StateObject private var store = BookStore()

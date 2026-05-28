@@ -1,4 +1,5 @@
 import SwiftUI
+import BookReadingManagerCore
 
 enum BookFormMode {
     case add

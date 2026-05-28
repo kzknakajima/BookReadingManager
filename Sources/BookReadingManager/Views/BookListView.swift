@@ -1,11 +1,12 @@
 import SwiftUI
+import BookReadingManagerCore
 
 struct BookListView: View {
     @EnvironmentObject var store: BookStore
     let books: [Book]
     @Binding var selectedBookID: UUID?
     @Binding var searchText: String
-    @Binding var sortOrder: SortOrder
+    @Binding var sortOrder: BookSortOrder
 
     var body: some View {
         VStack(spacing: 0) {
@@ -29,7 +30,7 @@ struct BookListView: View {
 
             HStack {
                 Picker("並び替え", selection: $sortOrder) {
-                    ForEach(SortOrder.allCases, id: \.self) { o in
+                    ForEach(BookSortOrder.allCases, id: \.self) { o in
                         Text(o.rawValue).tag(o)
                     }
                 }

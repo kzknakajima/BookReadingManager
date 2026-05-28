@@ -1,18 +1,12 @@
 import SwiftUI
-
-enum SortOrder: String, CaseIterable {
-    case dateAdded = "追加日"
-    case title     = "タイトル"
-    case author    = "著者"
-    case rating    = "評価"
-}
+import BookReadingManagerCore
 
 struct ContentView: View {
     @EnvironmentObject var store: BookStore
     @State private var selectedStatus: ReadingStatus? = nil
     @State private var selectedBookID: UUID? = nil
     @State private var searchText = ""
-    @State private var sortOrder: SortOrder = .dateAdded
+    @State private var sortOrder: BookSortOrder = .dateAdded
     @State private var showingAddBook = false
 
     var selectedBook: Book? {
@@ -20,29 +14,7 @@ struct ContentView: View {
     }
 
     var filteredBooks: [Book] {
-        var result = store.books
-
-        if let status = selectedStatus {
-            result = result.filter { $0.status == status }
-        }
-
-        if !searchText.isEmpty {
-            result = result.filter {
-                $0.title.localizedCaseInsensitiveContains(searchText) ||
-                $0.author.localizedCaseInsensitiveContains(searchText) ||
-                $0.genre.localizedCaseInsensitiveContains(searchText) ||
-                $0.memo.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-
-        switch sortOrder {
-        case .dateAdded: result.sort { $0.dateAdded > $1.dateAdded }
-        case .title:     result.sort { $0.title < $1.title }
-        case .author:    result.sort { $0.author < $1.author }
-        case .rating:    result.sort { $0.rating > $1.rating }
-        }
-
-        return result
+        BookFilter.apply(store.books, status: selectedStatus, searchText: searchText, sortOrder: sortOrder)
     }
 
     var body: some View {

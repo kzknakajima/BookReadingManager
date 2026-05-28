@@ -1,4 +1,5 @@
 import SwiftUI
+import BookReadingManagerCore
 
 struct BookDetailView: View {
     @EnvironmentObject var store: BookStore
