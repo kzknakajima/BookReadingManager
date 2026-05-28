@@ -86,9 +86,9 @@ struct AddEditBookView: View {
 
             Form {
                 Section("基本情報") {
-                    TextField("タイトル（必須）", text: $title)
-                    TextField("著者", text: $author)
-                    TextField("ジャンル", text: $genre)
+                    IMETextField(placeholder: "タイトル（必須）", text: $title)
+                    IMETextField(placeholder: "著者", text: $author)
+                    IMETextField(placeholder: "ジャンル", text: $genre)
                 }
 
                 Section("読書状態") {
