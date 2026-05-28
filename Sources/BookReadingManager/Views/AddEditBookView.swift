@@ -149,9 +149,6 @@ struct AddEditBookView: View {
         }
         .frame(width: 440, height: 520)
         .onAppear {
-            // macOS beta でウィンドウがキーにならないことがある
-            NSApp.activate(ignoringOtherApps: true)
-            // 少し遅延させてからフォーカスを設定
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 titleFocused = true
             }
