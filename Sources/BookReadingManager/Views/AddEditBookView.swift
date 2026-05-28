@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import BookReadingManagerCore
 
 enum BookFormMode {
@@ -36,6 +37,8 @@ struct AddEditBookView: View {
     @State private var dateFinished: Date
     @State private var showStartDate: Bool
     @State private var showFinishDate: Bool
+
+    @FocusState private var titleFocused: Bool
 
     init(mode: BookFormMode) {
         self.mode = mode
@@ -85,45 +88,74 @@ struct AddEditBookView: View {
 
             Divider()
 
-            Form {
-                Section("基本情報") {
-                    IMETextField(placeholder: "タイトル（必須）", text: $title)
-                    IMETextField(placeholder: "著者", text: $author)
-                    IMETextField(placeholder: "ジャンル", text: $genre)
-                }
+            ScrollView {
+                VStack(spacing: 14) {
 
-                Section("読書状態") {
-                    Picker("状態", selection: $status) {
-                        ForEach(ReadingStatus.allCases, id: \.self) { s in
-                            Label(s.rawValue, systemImage: s.systemImage).tag(s)
+                    GroupBox("基本情報") {
+                        VStack(spacing: 0) {
+                            TextField("タイトル（必須）", text: $title)
+                                .focused($titleFocused)
+                                .textFieldStyle(.plain)
+                                .padding(8)
+                            Divider()
+                            TextField("著者", text: $author)
+                                .textFieldStyle(.plain)
+                                .padding(8)
+                            Divider()
+                            TextField("ジャンル", text: $genre)
+                                .textFieldStyle(.plain)
+                                .padding(8)
                         }
                     }
-                    Toggle("開始日を記録", isOn: $showStartDate)
-                    if showStartDate {
-                        DatePicker("開始日", selection: $dateStarted, displayedComponents: .date)
-                    }
-                    Toggle("読了日を記録", isOn: $showFinishDate)
-                    if showFinishDate {
-                        DatePicker("読了日", selection: $dateFinished, displayedComponents: .date)
-                    }
-                }
 
-                Section("評価") {
-                    HStack {
-                        Text("評価")
-                        Spacer()
-                        StarRatingView(rating: $rating)
+                    GroupBox("読書状態") {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Picker("状態", selection: $status) {
+                                ForEach(ReadingStatus.allCases, id: \.self) { s in
+                                    Label(s.rawValue, systemImage: s.systemImage).tag(s)
+                                }
+                            }
+                            Divider()
+                            Toggle("開始日を記録", isOn: $showStartDate)
+                            if showStartDate {
+                                DatePicker("開始日", selection: $dateStarted,
+                                           displayedComponents: .date)
+                            }
+                            Toggle("読了日を記録", isOn: $showFinishDate)
+                            if showFinishDate {
+                                DatePicker("読了日", selection: $dateFinished,
+                                           displayedComponents: .date)
+                            }
+                        }
+                    }
+
+                    GroupBox("評価") {
+                        HStack {
+                            Text("評価")
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            StarRatingView(rating: $rating)
+                        }
+                    }
+
+                    GroupBox("メモ") {
+                        TextEditor(text: $memo)
+                            .frame(minHeight: 72)
+                            .font(.body)
                     }
                 }
-
-                Section("メモ") {
-                    TextEditor(text: $memo)
-                        .frame(minHeight: 80)
-                }
+                .padding()
             }
-            .formStyle(.grouped)
         }
-        .frame(width: 480, height: 560)
+        .frame(width: 440, height: 520)
+        .onAppear {
+            // macOS beta でウィンドウがキーにならないことがある
+            NSApp.activate(ignoringOtherApps: true)
+            // 少し遅延させてからフォーカスを設定
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                titleFocused = true
+            }
+        }
     }
 
     private func save() {
